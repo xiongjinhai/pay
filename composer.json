@@ -1,0 +1,31 @@
+{
+    "name": "dsweixin/pay",
+    "description": "pay wechat alipay  php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "xiongjinhai",
+            "email": "xiongjinhaimao@126.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "Pay\\WeChat\\": "wechat/src/"
+        }
+    },
+
+    "require-dev": {
+        "laravel/laravel": "^5.5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pay\\WeChat\\WeChatServiceProvider"
+            ]
+        }
+    }
+}
