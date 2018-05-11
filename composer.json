@@ -26,9 +26,6 @@
             "providers": [
                 "Pay\\WeChat\\WeChatServiceProvider"
             ],
-         /*   "aliases": [
-                "Pay\\WeChat\\WeChatServiceProvider"
-            ],*/
         }
     }
 }
