@@ -15,8 +15,28 @@ use Illuminate\Support\ServiceProvider;
 class WeChatServiceProvider extends ServiceProvider
 {
 
+    /**
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__."/config/config.php" => config_path('pay.php'),
+        ]);
+        $this->mergeConfigFrom(__DIR__."/config/config.php",'pay');
+    }
     public function register()
     {
-        echo 33;exit;
+        $this->app->bind('WeChat', 'Pay\WeChat\Pay');
+    }
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [];
     }
 }
