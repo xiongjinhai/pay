@@ -8,6 +8,8 @@
  */
 namespace Pay\WeChat\Contracts;
 
+use Pay\WeChat\Exceptions\InvalidResponseException;
+
 class Tools
 {
     /**

@@ -29,6 +29,8 @@ class WeChatServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('WeChat', 'Pay\WeChat\Pay');
+
+        $this->app->bind('Oauth', 'Pay\WeChat\Oauth');
     }
     /**
      * Get the services provided by the provider.
