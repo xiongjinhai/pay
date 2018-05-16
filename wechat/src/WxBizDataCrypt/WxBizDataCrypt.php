@@ -8,7 +8,7 @@
 
 namespace Pay\WeChat\WxBizDataCrypt;
 
-include_once "errorCode.php";
+include_once "ErrorCode.php";
 
 class WxBizDataCrypt
 {
