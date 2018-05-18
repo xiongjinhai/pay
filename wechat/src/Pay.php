@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Pay\WeChat\Contracts\DataArray;
 use Pay\WeChat\Contracts\Tools;
 use Pay\WeChat\Exceptions\InvalidArgumentException;
+use Pay\WeChat\Exceptions\InvalidResponseException;
 
 class Pay
 {
