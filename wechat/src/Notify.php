@@ -14,24 +14,35 @@ use Pay\WeChat\Exceptions\InvalidWxPayException;
 
 class Notify
 {
+    /**
+     * 回调入口
+     * @param bool $needSign
+     * @return bool|mixed
+     */
     public function handle($needSign = true)
     {
+
         $result = self::notify(array($this, 'NotifyCallBack'), $msg);
 
-        if ($result == false) {
-            $xml["return_code"] = "FAIL";
-            $xml["return_msg"] = !empty($msg) ? $msg : "ERROR";
-            $arr2xml = Tools::arr2xml($xml);
-            $this->ReplyNotify(false,$arr2xml);
-            return;
-        } else {
-            //该分支在成功回调到NotifyCallBack方法，处理完成之后流程
-            $xml["return_code"] = "SUCCESS";
-            $xml["return_msg"]  = "OK";
-            $arr2xml = Tools::arr2xml($xml);
-        }
-        $this->ReplyNotify($needSign,$arr2xml);
+        return $result;
     }
+
+    /**
+     * 回复通知
+     * @param $xml
+     * @param bool $needSign
+     */
+    public function ReplyNotify($xml,$needSign = true)
+    {
+        //如果需要签名
+        if ($needSign == true && $xml["return_code"] == "SUCCESS") {
+            //$this->SetSign();没有实现
+        }
+        $arr2xml = Tools::arr2xml($xml);
+
+        echo $arr2xml;exit;
+    }
+
     /**
      * notify回调方法，该方法中需要赋值需要输出的参数,不可重写
      * @param array $data
@@ -40,43 +51,21 @@ class Notify
     final public function NotifyCallBack($data)
     {
         $msg = "OK";
-
         $result = $this->NotifyProcess($data, $msg);
-
-        if ($result == true) {
-            //这里处理自己业务逻辑地方,成功返回true,失败false
-            $call_back = self::postDataCurl(config('pay.notify_url_logic'),$data);
-            if ($call_back == "true"){
-                $xml["return_code"] = "SUCCESS";
-                $xml["return_msg"] = "OK";
-            }else{
-                $result = false;
-                $xml["return_code"] = "FAIL";
-                $xml["return_msg"]  = $msg;
-            }
+        if ($result) {
+            $arr["result"]         = $result;
+            $arr["data"]           = $data;
+            $arr["return_code"]    = "SUCCESS";
+            $arr["return_msg"]     = "OK";
         } else {
-            $xml["return_code"] = "FAIL";
-            $xml["return_msg"] = $msg;
+            $arr["result"]         = $result;
+            $arr["data"]           = $data;
+            $arr["return_code"]    = "FAIL";
+            $arr["return_msg"]     = $msg;
         }
-
-        Tools::arr2xml($xml);
-
-        return $result;
+        return $arr;
     }
-    //通过curl模拟post的请求；
-    protected  function postDataCurl($url,$data=array()){
-        //对空格进行转义
-        $url = str_replace(' ','+',$url);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //如果需要将结果直接返回到变量里，那加上这句。
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return $result;
-    }
+
     /**
      *
      * 回调方法入口，子类可重写该方法
@@ -120,13 +109,6 @@ class Notify
         }
         return false;
     }
-    public function ReplyNotify($needSign = true,$xml){
-        //如果需要签名
-        if($needSign == true && $xml["return_code"] == "SUCCESS") {
-            //$this->SetSign();没有实现
-        }
-        echo $xml;
-    }
     /*$xml = "<xml><appid><![CDATA[wx05ad3d3ccbea8ce6]]></appid>
     <bank_type><![CDATA[CFT]]></bank_type>
     <cash_fee><![CDATA[1]]></cash_fee>
@@ -149,22 +131,22 @@ class Notify
      * @param $msg
      * @return bool|mixed
      */
-    final protected function notify($callback,&$msg){
+    final protected function notify($callback, &$msg)
+    {
         //获取通知的数据
         $xml = file_get_contents('php://input');
-
         //如果返回成功则验证签名
-        try{
+        try {
 
             $result = Tools::xml2arr($xml);
 
-        }catch (InvalidWxPayException $e){
+        } catch (InvalidWxPayException $e) {
 
             $msg = $e->getMessage();
 
             return false;
         }
 
-        return call_user_func($callback,$result);
+        return call_user_func($callback, $result);
     }
 }

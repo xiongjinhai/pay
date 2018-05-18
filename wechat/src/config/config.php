@@ -49,8 +49,6 @@ return[
 
     'notify_url' => env('notify_url','http://paysdk.weixin.qq.com/example/notify.php'),//回调地址
 
-    'notify_url_logic' => env('notify_url_logic',env('APP_URL').'/v1/order/notifyLogic'),//回调业务逻辑处理地址
-
     //配置缓存目录，需要拥有写权限
     'cache_path'     => '',
 
