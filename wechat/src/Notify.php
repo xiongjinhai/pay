@@ -9,6 +9,7 @@
 
 namespace Pay\WeChat;
 
+use Illuminate\Support\Facades\Log;
 use Pay\WeChat\Contracts\Tools;
 use Pay\WeChat\Exceptions\InvalidWxPayException;
 
@@ -21,7 +22,7 @@ class Notify
      */
     public function handle($needSign = true)
     {
-
+       
         $result = self::notify(array($this, 'NotifyCallBack'), $msg);
 
         return $result;
